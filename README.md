@@ -1,7 +1,7 @@
 # 🧠 IMPACT-Seg: Anatomical segmentation of CT, CBCT and MRI in 3D Slicer
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/vboussot/SlicerImpactSeg/blob/main/LICENSE)
-[![Models](https://img.shields.io/badge/models-huggingface-orange)](https://huggingface.co/VBoussot/ImpactSeg)
+[![Models](https://img.shields.io/badge/models-huggingface-orange)](https://huggingface.co/HCedric/IMPACTSeg)
 [![Slicer](https://img.shields.io/badge/3D%20Slicer-extension-8A2BE2)](https://github.com/vboussot/SlicerImpactSeg)
 [![Paper](https://img.shields.io/badge/📌%20Paper-KonfAI-blue)](https://arxiv.org/abs/2508.09823)
 
@@ -53,8 +53,8 @@ The same apps run outside Slicer, on the same weights:
 
 ```bash
 pip install konfai-apps
-konfai-apps infer VBoussot/ImpactSeg:fine-3d -i ct.nii.gz -o Output --gpu 0
-konfai-apps infer VBoussot/ImpactSeg:coarse -i ct.nii.gz -o Output --cpu 1
+konfai-apps infer HCedric/IMPACTSeg:fine-3d -i ct.nii.gz -o Output --gpu 0
+konfai-apps infer HCedric/IMPACTSeg:coarse -i ct.nii.gz -o Output --cpu 1
 konfai-apps eval VBoussot/MRSegmentator-KonfAI:MRSegmentator -i segmentation.mha --gt reference.mha -o Evaluation
 ```
 
@@ -62,7 +62,7 @@ konfai-apps eval VBoussot/MRSegmentator-KonfAI:MRSegmentator -i segmentation.mha
 
 ## 🧱 What the extension is made of
 
-The module registers one app template, **Segmentation**, on the KonfAI extension, over three Hugging Face repositories: [`VBoussot/ImpactSeg`](https://huggingface.co/VBoussot/ImpactSeg), [`VBoussot/MRSegmentator-KonfAI`](https://huggingface.co/VBoussot/MRSegmentator-KonfAI) and [`VBoussot/TotalSegmentator-KonfAI`](https://huggingface.co/VBoussot/TotalSegmentator-KonfAI). The app list, the inference and evaluation panels, the device and remote-server rows come from [SlicerKonfAI](https://github.com/vboussot/SlicerKonfAI). Any other KonfAI app can be added from Hugging Face or from a local folder.
+The module registers one app template, **Segmentation**, on the KonfAI extension, over three Hugging Face repositories: [`HCedric/IMPACTSeg`](https://huggingface.co/HCedric/IMPACTSeg), [`VBoussot/MRSegmentator-KonfAI`](https://huggingface.co/VBoussot/MRSegmentator-KonfAI) and [`VBoussot/TotalSegmentator-KonfAI`](https://huggingface.co/VBoussot/TotalSegmentator-KonfAI). The app list, the inference and evaluation panels, the device and remote-server rows come from [SlicerKonfAI](https://github.com/vboussot/SlicerKonfAI). Any other KonfAI app can be added from Hugging Face or from a local folder.
 
 Run from source:
 

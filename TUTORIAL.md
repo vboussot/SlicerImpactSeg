@@ -53,8 +53,8 @@ module works the same way, and so do CBCT and MRI volumes.
 From the command line, the same runs are:
 
 ```bash
-konfai-apps infer VBoussot/ImpactSeg:fine-3d -i CT.mha -o Output --gpu 0
-konfai-apps infer VBoussot/ImpactSeg:coarse -i CT.mha -o Output --cpu 1
+konfai-apps infer HCedric/IMPACTSeg:fine-3d -i CT.mha -o Output --gpu 0
+konfai-apps infer HCedric/IMPACTSeg:coarse -i CT.mha -o Output --cpu 1
 konfai-apps infer VBoussot/MRSegmentator-KonfAI:MRSegmentator -i CT.mha -o Output --cpu 1 -uncertainty
 konfai-apps eval VBoussot/MRSegmentator-KonfAI:MRSegmentator -i Segmentation.mha --gt Reference.mha -o Evaluation
 konfai-apps uncertainty VBoussot/MRSegmentator-KonfAI:MRSegmentator -i InferenceStack.mha -o Uncertainty

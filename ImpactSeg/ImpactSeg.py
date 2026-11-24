@@ -110,7 +110,7 @@ class ImpactSegWidget(ScriptedLoadableModuleWidget):
 
         self.konfai_core = KonfAICoreWidget("Impact Seg")
         impact_seg_widget = KonfAIAppTemplateWidget(
-            "Segmentation", ["VBoussot/MRSegmentator-KonfAI", "VBoussot/TotalSegmentator-KonfAI", "VBoussot/ImpactSeg"]
+            "Segmentation", ["VBoussot/MRSegmentator-KonfAI", "VBoussot/TotalSegmentator-KonfAI", "HCedric/IMPACTSeg"]
         )
         self.konfai_core.register_apps([impact_seg_widget])
         self.layout.addWidget(self.konfai_core)
