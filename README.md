@@ -1,100 +1,88 @@
+# 🧠 IMPACT-Seg: Anatomical segmentation of CT, CBCT and MRI in 3D Slicer
+
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/vboussot/SlicerImpactSeg/blob/main/LICENSE)
+[![Models](https://img.shields.io/badge/models-huggingface-orange)](https://huggingface.co/VBoussot/ImpactSeg)
+[![Slicer](https://img.shields.io/badge/3D%20Slicer-extension-8A2BE2)](https://github.com/vboussot/SlicerImpactSeg)
 [![Paper](https://img.shields.io/badge/📌%20Paper-KonfAI-blue)](https://arxiv.org/abs/2508.09823)
 
-# 🧠 Slicer IMPACT-Seg
+<img src="ImpactSeg.png" alt="IMPACT-Seg logo" width="250" align="right">
 
-<img src="ImpactSeg.png" alt="IMPACT Seg Logo" width="300" align="right">
+**IMPACT-Seg** is a 3D Slicer extension for deep-learning **anatomical segmentation of CT, CBCT and MRI**, with the quality-assurance tools needed to check the result. It runs the **IMPACT-Seg** models (126 structures, or 11 body regions and tissues, one network for the three modalities), **MRSegmentator** and **TotalSegmentator**, all powered by **KonfAI**.
 
-**Slicer IMPACT-Seg** is an open-source 3D Slicer extension dedicated to deep learning-based **anatomical segmentation**.
-It provides a unified integration of KonfAI segmentation apps within the 3D Slicer environment, making state-of-the-art segmentation models as well as quality-assurance (QA) tools accessible for routine clinical practice and research workflows.
+![IMPACT-Seg 3D on a pelvic CT](Screenshots/main.png)
 
-The extension gives direct access to segmentation apps such as **ImpactSeg**, **MRSegmentator** and **TotalSegmentator**, and is powered by **KonfAI**, a modular deep learning framework ensuring **fast inference**, **reproducibility**, and **flexible deployment** into clinical workflows.
+*IMPACT-Seg 3D, five folds, on a pelvic CT of the public SynthRAD2023 dataset.*
 
 ---
 
-## ✅ What you can do in 3 minutes (step-by-step tutorial)
+## 🧩 The module
 
-This quick tutorial demonstrates the typical workflow: **load → run segmentation → review results → assess reliability**.
+The **Impact Seg** module (category *Segmentation*) runs the chosen segmentation app on a volume of the scene and loads the result as a Segmentation node with the names and colours of the structures; its *Evaluation* section compares the result with a reference segmentation, or estimates its uncertainty when there is none.
 
-### 1) Install and open the module
-1. Install **3D Slicer ≥ 5.10**
-2. Open **3D Slicer** and go to **Extension Manager**
-3. Search for **ImpactSeg**
-4. Click **Install**
-5. Restart Slicer and open the **Impact Seg** module from the **Segmentation** category
+| App | Structures | Model |
+|-----|------------|-------|
+| **IMPACT-Seg 3D** | 126: abdominal and thoracic organs, lung lobes, heart chambers and great vessels, every vertebra and rib, pelvic and limb bones, trunk muscles, head-and-neck organs at risk | 3D network at 1.5 × 1.5 × 2 mm, five folds. The more accurate. |
+| **IMPACT-Seg 2.5D** | the same 126 | Five adjacent slices at a time, five folds. The lighter. |
+| **IMPACT-Seg Coarse** | 11 body regions and tissues: subcutaneous tissue, muscle, abdominal and thoracic cavities, bones, glands, pericardium, breast implant, mediastinum, spinal cord, brain | 3D network at 3 mm, one model. Runs on a CPU. |
+| **MRSegmentator** | 40 structures, MRI and CT | five folds |
+| **TotalSegmentator** (CT or MRI, full or 3 mm) | 117 on CT, 50 on MRI | one to five models |
 
-### 2) Load a case
-1. In Slicer, click **DICOM** (or drag-and-drop a NIfTI / NRRD / MHA file)
-2. Load a volume (e.g., `volume.nii.gz`)
-3. Confirm the volume appears in the **Data** module and is visible in the slice views
+The models are downloaded from Hugging Face on first use. On a 24 GB GPU, IMPACT-Seg 3D segments a whole-body CT in about 3.5 minutes with its five folds, and in under a minute with one.
 
-### 3) Run segmentation
-1. In the Impact Seg module, open the **Segmentation** tab
-2. Select:
-   - **Input volume**: `volume`
-   - **KonfAI App**: choose an app (e.g., *ImpactSeg*, *MRSegmentator* or *TotalSegmentator*)
-3. Click **Run**
-4. Wait for completion: once the process finishes, the segmentation is automatically loaded with anatomical labels and colors, and can be displayed in 3D
+Research use only, not a clinically validated device.
 
-✅ You can now inspect the results in 2D and 3D and adjust visualization (opacity, label colors, 3D rendering).
+---
 
-### 4) QA with reference
-If you have a reference segmentation, you can quantitatively validate the result:
+## 🚀 Quick start
 
-1. Load the reference segmentation (as a labelmap)
-2. Go to the **Evaluation** tab
-3. Select:
-   - **Output volume** -> the generated segmentation
-   - **Reference volume** -> the reference labelmap
-   - Optional **ROI mask**
-4. Click **Run**
-5. Review quantitative metrics and qualitative overlays inside Slicer
+1. Install **3D Slicer ≥ 5.10**, then from the **Extensions Manager** the **PyTorch** extension (SlicerPyTorch) and **ImpactSeg**. The **KonfAI** extension is installed with it.
+2. Restart Slicer and open **Impact Seg** (category **Segmentation**). On the first opening, `konfai-apps` is installed into Slicer's Python.
+3. Load a CT, CBCT or MRI (**DICOM** module, or drag and drop a NIfTI / NRRD / MHA file).
+4. Choose an app, select the **Input Volume** and the checkpoints of the **Ensemble**, click **Run**. **Show 3D** renders the result.
+5. Open **Evaluation**:
+   - **With reference**: the output label map and a reference label map, **Run**. The Dice, and a map of the voxels where the two disagree.
+   - **No reference (Uncertainty)**, for the apps that ship it (MRSegmentator): after a run with **Uncertainty** ticked, **Run** on the inference stack. A voxel-wise uncertainty map.
 
-### 5) QA without reference (uncertainty estimation)
-When no ground truth annotation is available, you can still assess prediction reliability.
+👉 Every step with a screenshot: [`TUTORIAL.md`](TUTORIAL.md)
 
-1. Go to the **Evaluation** tab and select **No reference (Uncertainty)**
-2. Select the **inference stack volume** generated during prediction
-3. Click **Run**
-4. Review the generated uncertainty maps and metrics
+---
 
-Uncertainty can be computed using:
-- test-time augmentation (TTA)
-- stochastic dropout
-- multi-model ensembling
+## ⚙️ From the command line
 
-These strategies are **configurable during the segmentation step** via the **sampling settings**.
+The same apps run outside Slicer, on the same weights:
 
-## ⚙️ Features
+```bash
+pip install konfai-apps
+konfai-apps infer VBoussot/ImpactSeg:fine-3d -i ct.nii.gz -o Output --gpu 0
+konfai-apps infer VBoussot/ImpactSeg:coarse -i ct.nii.gz -o Output --cpu 1
+konfai-apps eval VBoussot/MRSegmentator-KonfAI:MRSegmentator -i segmentation.mha --gt reference.mha -o Evaluation
+```
 
-### 🧩 Deep Learning Inference
-- Anatomical segmentation of CT, MRI and CBCT volumes
-- Supports **DICOM**, **NIfTI** (`.nii`, `.nii.gz`), and **MHA** formats
-- Automatic preprocessing and intensity normalization
+---
 
-### ⚕️ Quality Assurance (QA)
-- Quantitative metrics against a reference segmentation
-- Synchronized **2D/3D visual inspection** within Slicer
+## 🧱 What the extension is made of
 
-### 📉 Uncertainty Quantification
-- Ensemble and test-time augmentation (TTA) strategies
-- Voxel-wise uncertainty maps when no reference is available
+The module registers one app template, **Segmentation**, on the KonfAI extension, over three Hugging Face repositories: [`VBoussot/ImpactSeg`](https://huggingface.co/VBoussot/ImpactSeg), [`VBoussot/MRSegmentator-KonfAI`](https://huggingface.co/VBoussot/MRSegmentator-KonfAI) and [`VBoussot/TotalSegmentator-KonfAI`](https://huggingface.co/VBoussot/TotalSegmentator-KonfAI). The app list, the inference and evaluation panels, the device and remote-server rows come from [SlicerKonfAI](https://github.com/vboussot/SlicerKonfAI). Any other KonfAI app can be added from Hugging Face or from a local folder.
 
-### 💡 Integration-Ready
-- Built on the **KonfAI** extension: shared remote computation servers, device selection and app management
-- Each KonfAI App is a self-contained workflow (YAML configs + trained model) that runs identically from Python, the CLI, or this Slicer module
+Run from source:
 
-## 🔗 Related projects
+```bash
+Slicer --additional-module-paths /path/to/SlicerKonfAI/KonfAI /path/to/SlicerImpactSeg/ImpactSeg
+```
 
-- [KonfAI](https://github.com/vboussot/KonfAI) — the deep learning framework powering the apps
-- [SlicerKonfAI](https://github.com/vboussot/SlicerKonfAI) — the base Slicer extension
-- [SlicerImpactSynth](https://github.com/vboussot/SlicerImpactSynth) — synthetic CT generation
-- [SlicerImpactReg](https://github.com/vboussot/SlicerImpactReg) — image registration
+Related projects:
 
-## 📖 Citation
+- [KonfAI](https://github.com/fideus-labs/KonfAI): the deep-learning framework that runs the apps.
+- [SlicerKonfAI](https://github.com/vboussot/SlicerKonfAI): the base Slicer extension.
+- [SlicerImpactSynth](https://github.com/vboussot/SlicerImpactSynth): synthetic CT from MRI and CBCT.
+- [SlicerImpactReg](https://github.com/vboussot/SlicerImpactReg): image registration.
 
-If you use ImpactSeg in your research, please cite:
+---
 
-> Boussot V., Dillenseger J.-L.
-> **KonfAI: A Modular and Fully Configurable Framework for Deep Learning in Medical Imaging.**
-> [arXiv:2508.09823](https://arxiv.org/abs/2508.09823)
+## ⚖️ License and citation
+
+The extension is released under the [Apache License 2.0](LICENSE). MRSegmentator and TotalSegmentator are the work of their authors: cite them as given on each app's card.
+
+If you use IMPACT-Seg in your research, please cite:
+
+> Boussot, V. & Dillenseger, J.-L., **KonfAI: A Modular and Fully Configurable Framework for Deep Learning in Medical Imaging.** [arXiv:2508.09823](https://arxiv.org/abs/2508.09823), 2025.
